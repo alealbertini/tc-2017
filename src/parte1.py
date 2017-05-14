@@ -22,7 +22,7 @@ def frecuencia(cant, total):
 	
 def informacion(freq):
 	if freq == 0:
-		return Infinite
+		return 10000
 	if freq == 1:
 		return 0
 	return round(-math.log(freq, 2), 2)
@@ -31,7 +31,7 @@ def entropia(freq_b, freq_u):
 	return freq_b * informacion(freq_b) + freq_u * informacion(freq_u)
 
 def colector(pkt):
-	global pkt_broadcast, pkt_unicast,
+	global pkt_broadcast, pkt_unicast
 	
 	print toString(pkt)
 	if args.get('output'):
