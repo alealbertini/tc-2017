@@ -94,6 +94,7 @@ def procesar(pkt):
 	# scapy no es un experto en filtros
 	if not ARP in pkt:
 		return 	
+	print toString(pkt)
 	s = src(pkt)
 	d = dest(pkt)
 	vistos[d] = 1 if not d in vistos else vistos[d] + 1
