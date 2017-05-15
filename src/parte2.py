@@ -3,16 +3,20 @@ import argparse
 logging.getLogger("scapy.runtime").setLevel(logging.ERROR) 
 from scapy.all import *	
 import matplotlib.pyplot as plt
-import pydot;
+import networkx as nx
 
 args = None
 vistos = {} # key es la direccion, value la cantidad
+ejes = []
 
 def monitorear():
 	sniff(prn=colector, store=0)
 
 def dest(pkt):
     return pkt[ARP].pdst
+
+def src(pkt):
+    return pkt[ARP].psrc
     
 def toString(pkt):
 	return pkt.summary()
@@ -22,7 +26,7 @@ def frecuencia(cant, total):
 	
 def informacion(freq):
 	if freq == 0:
-		return Infinite 
+		return 10000 
 	if freq == 1:
 		return 0
 	return round((-1)*math.log(freq, 2), 4)
@@ -66,29 +70,45 @@ def graficarInfo():
 	plt.tight_layout()
 	#plt.savefig('info_entropia.png')
 	plt.show()
-	
-def colector(pkt):
-	global vistos
+
+def graficarRed():
+	freq, info, h = analisis()
+	G = nx.DiGraph()
+	G.add_edges_from(ejes)
+	values = ['yellow' if info.get(node, 10000) < h else 'red'  for node in G.nodes()]
+	labels = {}
+	for u,v,d in G.edges(data=True):
+		eje = (u,v)
+		d['weight'] = ejes.count(eje)
+		labels[eje] = ejes.count(eje)
+		
+		
+	pos = nx.spring_layout(G, k = 1)
+	nx.draw_networkx_edge_labels(G,pos,edge_labels=labels)
+	nx.draw_networkx_labels(G,pos,font_size=15, font_weigth='bold')
+	nx.draw(G, pos, cmap = plt.get_cmap('jet'), node_color = values, node_size=1200, with_labels=False)
+	plt.show()
+  
+def procesar(pkt):
+	global vistos,ejes
 	# scapy no es un experto en filtros
 	if not ARP in pkt:
-		return 
-		
+		return 	
+	s = src(pkt)
+	d = dest(pkt)
+	vistos[d] = 1 if not d in vistos else vistos[d] + 1
+	ejes.append((s, d))
+	
+def colector(pkt):
 	print toString(pkt)
 	if args.get('output'):
 		file = PcapWriter(args.get('output'), append=True, sync=True)
 		file.write(pkt)
-	d = dest(pkt)
-	vistos[d] = 1 if not d in vistos else vistos[d] + 1
+	procesar(pkt)
 	mostrar_sumario()
 	
-def replay(pkt):
-	global vistos
-	# scapy no es un experto en filtros
-	if not ARP in pkt:
-		return 
-		
-	d = dest(pkt)
-	vistos[d] = 1 if not d in vistos else vistos[d] + 1
+def replay(pkt):	
+	procesar(pkt)
 		
 def main(): 
 	global args
@@ -105,6 +125,6 @@ def main():
 			replay(pkt)
 		mostrar_sumario()
 		graficarInfo()
-		
+		graficarRed()
 if __name__ == '__main__':
     main()

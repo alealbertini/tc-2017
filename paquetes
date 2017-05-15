@@ -1,4 +1,3 @@
 scapy
-graphviz
 matplotlib
-pydot
+networkx
