@@ -6,23 +6,27 @@ El primer experimento, el cual ve la red como una fuente con 2 simbolos unicamen
 ethernet durante 20 minutos. Como era de esperarse cerca del 100\% del trafico es unicast dado que es una red con mucho trafico
 hacia un servidor en particular o hacia el gateway.
 
+\begin{figure}[!h]
+\centering
+\caption{Informaci'on de S, Red laboral}
 \begin{tabular}{ r|c|c| }
 \multicolumn{1}{r}{}
  &  \multicolumn{1}{c}{frecuencia}
  & \multicolumn{1}{c}{informaci'on} \\
 \cline{2-3}
-broadcast & 0.03 & 5.06 \\
+$S_{broadcast}$ & 0.03 & 5.06 \\
 \cline{2-3}
-unicast & 0.97 & 0.04 \\
+$S_{unicast}$ & 0.97 & 0.04 \\
 \cline{2-3}
 \end{tabular}
+\end{figure}
  
- Estos valores nos dan una entropia de 0.19 bits (siendo el m'aximo 1 dado que hay 2 simbolos en principio equiprobables),
+ Estos valores nos dan una entrop'ia de 0.19 bits (siendo el m'aximo 1 dado que hay 2 simbolos en principio equiprobables),
  dado que el trafico broadcast sin ser despreciable solo es un porcentaje peque\~no del trafico total.\\
  
 En el segundo experimento, el cual modela la red basado en la direcci'on a resolver en mensajes ARP, usamos la misma captura
 utilizada en el experimento anterior. Bajo nuestra definici'on para destacar nodos (que la informaci'on del simbolo de ese nodo 
-sea menor o igual a la entropia de la fuente) solo un nodo fue destacado por amplio margen, el gateway por defecto de la red.\\
+sea menor o igual a la entrop'ia de la fuente) solo un nodo fue destacado por amplio margen, el gateway por defecto de la red.\\
 
 \begin{figure}[!h]
 \centering
@@ -36,7 +40,7 @@ a la realidad en terminos de trafico total y disposici'on.
 
 \begin{figure}[!h]
 \centering
-\caption{Visualizaci'on red laboral}
+\caption{Visualizaci'on red laboral, en amarillo los nodos destacados}
 \includegraphics[width=0.9\textwidth]{red2_red}
  \label{fig:red2net}
 \end{figure}

@@ -1,13 +1,13 @@
 \section{M'etodos y ambientes}
 Las redes seran analizadas con dos herramientas que escuchan un medio compartido en modo promiscuo. La primer herramienta
- modela la red como una fuente S cuyos posibles simbolos son $S_{unicast}$ si el paquete leido es enviado
- a un nodo especifico y $S_{broadcast}$ si el paquete es enviado a la direccion de broadcast ($ff:ff:ff:ff:ff:ff$), ningun paquete
- es filtrada, cualquier paquete que llega nuestro enlace ser'a tenido en cuenta.\\
-La segunda herramienta modelar'a la red como una fuente S1 cuyos posibles simbolos son todas las direcciones de red disponibles
+ modela la red como una fuente $S$ cuyos posibles simbolos son $S_{unicast}$ si el paquete leido es enviado
+ a un nodo especifico y $S_{broadcast}$ si el paquete es enviado a la direccion de broadcast (\texttt{ff:ff:ff:ff:ff:ff}), 
+ ning'un paquete es filtrado, cualquier paquete que llega nuestro enlace ser'a tenido en cuenta.\\
+La segunda herramienta modelar'a la red como una fuente $S1$ cuyos posibles simbolos son todas las direcciones de red disponibles
 en la red (como esto es desconocido, vamos a asumir que todos los simbolos observados son todos los simbolos posibles) en 
 paquetes ARP que nos encontramos en la red. La consigna era definir una funci'on que designe algu'n simbolo como distinguido
 fundado en alg'un resultado matematico y para esto distinguimos a aquellos simbolo o simbolos que tengan informaci'on menor a
-la entropia dado que estos seran m'as comunes de ver (por la definici'on de informaci'on y entropia), es decir, que los otros
+la entrop'ia dado que estos seran m'as comunes de ver (por la definici'on de informaci'on y entrop'ia), es decir, que los otros
 nodos de la red piden su direcci'on de enlace muy frecuentemente. Esto har'a distinguir a nodos internos muy usados o bien
 al gateway por defecto de la red por la cual todos los nodos salen a otras redes como internet.\\
 
@@ -15,6 +15,6 @@ Las N redes que elegimos para experimentar son las siguientes
 \begin{itemize}
 	\item Red hogare\~na: red local wi-fi en una casa particular, lo unico que sabemos es que contiene una cantidad muy
 	 limitada de computadoras personales y dispositivos mobiles.
-	\item ??
-	\item ??
+	\item Red laboral: red local ethernet en una oficina, sabemos que conviven computadoras de empleados y servidores.
+	\item Red p'ublica: red wi-fi en un shopping, diferentes tipos de usuarios, dispositivos y duraci'on de leasing the direcciones de red
 \end{itemize}

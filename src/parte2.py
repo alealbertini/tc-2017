@@ -75,20 +75,25 @@ def graficarRed():
 	freq, info, h = analisis()
 	G = nx.DiGraph()
 	G.add_edges_from(ejes)
-	values = ['yellow' if info.get(node, 10000) < h else 'red'  for node in G.nodes()]
-	labels = {}
+	colores = ['yellow' if info.get(node, 10000) < h else 'red'  for node in G.nodes()]
+	tamanio_nodos = [(1/info.get(node, 10))*6000  for node in G.nodes()]
+	labels_ejes = {}
 	for u,v,d in G.edges(data=True):
 		eje = (u,v)
 		d['weight'] = ejes.count(eje)
-		labels[eje] = ejes.count(eje)
-		
-		
+		labels_ejes[eje] = ejes.count(eje)
+	labels_nodos = {}
+	for node in G.nodes():
+		if info.get(node, 100) / 2 < h:
+			labels_nodos[node] = node
 	pos = nx.spring_layout(G, k = 1)
-	nx.draw_networkx_edge_labels(G,pos,edge_labels=labels)
-	nx.draw_networkx_labels(G,pos,font_size=15, font_weigth='bold')
-	nx.draw(G, pos, cmap = plt.get_cmap('jet'), node_color = values, node_size=1200, with_labels=False)
+	nx.draw_networkx_edge_labels(G,pos,edge_labels=labels_ejes)
+	nx.draw_networkx_labels(G,pos,font_size=13, labels = labels_nodos ,\
+		font_weigth='bold')
+	nx.draw(G, pos, cmap = plt.get_cmap('jet'), node_color = colores, \
+		node_size=tamanio_nodos, with_labels=False)
 	plt.show()
-  
+	
 def procesar(pkt):
 	global vistos,ejes
 	# scapy no es un experto en filtros
