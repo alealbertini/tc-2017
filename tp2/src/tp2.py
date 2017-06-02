@@ -139,18 +139,23 @@ def main():
 
 	max_rtts_Delta = next(x for x in saltos[RTTS] if x > 0)
 	indice_max_rtts_Delta = saltos[RTTS].index(max_rtts_Delta)
-	rttsDelta.append((max_rtts_Delta, indice_max_rtts_Delta))
+	#rttsDelta.append((max_rtts_Delta, indice_max_rtts_Delta))
+	for j in range(0,indice_max_rtts_Delta+1):
+		esta.append(-1)
+	#esta.append(-1)
 
 	for i in range(indice_max_rtts_Delta+1,len(saltos[RTTS])):
 
 		if saltos[IPS][i] == -1:	#no contestaron.
 			esta.append(-1)
 			continue
-		dif = saltos[RTTS][i]-saltos[RTTS][i-1] #calculo dif entre saltos
+		dif = saltos[RTTS][i]-max_rtts_Delta #calculo dif entre saltos
 		if dif >= 0: #agrego solo si da mayor o igual.
 			rttsDelta.append((dif,i))
 			esta.append(len(rttsDelta)-1)	#appendeo el indice donde esta la iesima ip en rttsDelta
-			max_rtts_Delta = dif
+			max_rtts_Delta = saltos[RTTS][i]
+		else:
+			esta.append(-1)	
 
 
 	rttDeltaPromedio = np.mean(rttsDelta)  #promedio y desvio de los saltos.
@@ -193,10 +198,13 @@ def main():
 
 			#Lo borro de la lista de desvios absolutos
 			#rttsDelta_outlier = [(x for x in saltos[RTTS] if x[INDICE_IP] == desv_abs[-1][IND
-			rttsDelta_outlier = [(x for x in rttsDelta_outlier[RTTS] if x[INDICE_IP] != desv_abs_mas_grande[INDICE_IP])]
+			
+			for x in xrange(1,10):
+					pass	
+			rttsDelta_outlier = [x for x in rttsDelta_outlier if x[INDICE_IP] != desv_abs_mas_grande[INDICE_IP]]
 
 			#Recalculo promedo y desvio y vuelvo a empezar
-			temp = [y[Delta] for y in rttsDelta_outlier]
+			temp = [y[DELTA] for y in rttsDelta_outlier]
 			promedio_outlier = np.mean(temp)
 			desvio_outlier = np.std(temp)
 
@@ -221,30 +229,35 @@ def main():
 	imprimio = False
 	for i in range(len(saltos[IPS])):
 		imprimio = True
-		responde = esta[i] #Si responde y si lo hace, devuelve indice de esa ip en la lista de deltas.
+		responde = saltos[IPS][i] 
+			#Si responde y si lo hace, devuelve indice de esa ip en la lista de deltas.
 		if responde != -1: #responde
-			if outliers_list[i]:
-				print "%i:" % (i), \
-				str(saltos[IPS][i]).ljust(col_width_ips_avg), \
-				str(saltos[RTTS][i]).ljust(col_width_rtts_acum), \
-				str(rttsDelta[DELTA][responde]).ljust(col_width_rtt_delta), \
-				str(rttsZ[responde]).ljust(col_width_rtt_z), \
-				"OUTLIER!"
-			else:
-				if i != indice_max_rtts_Delta:
+			delta_index = esta[i]
+			if delta_index != -1: # se lo considera en el calculo del delta.
+
+				if outliers_list[i]:
 					print "%i:" % (i), \
 					str(saltos[IPS][i]).ljust(col_width_ips_avg), \
 					str(saltos[RTTS][i]).ljust(col_width_rtts_acum), \
-					str(rttsDelta[DELTA][responde]).ljust(col_width_rtt_delta), \
-					str(rttsZ[responde]).ljust(col_width_rtt_z)
+					str(rttsDelta[delta_index][DELTA]).ljust(col_width_rtt_delta), \
+					str(rttsZ[delta_index]).ljust(col_width_rtt_z), \
+					"OUTLIER!"
 				else:
+					#if i != indice_max_rtts_Delta:
+					print "%i:" % (i), \
 					str(saltos[IPS][i]).ljust(col_width_ips_avg), \
 					str(saltos[RTTS][i]).ljust(col_width_rtts_acum), \
-					str(-1).ljust(col_width_rtt_delta), \
-					str(-1).ljust(col_width_rtt_z)
+					str(rttsDelta[delta_index][DELTA]).ljust(col_width_rtt_delta), \
+					str(rttsZ[delta_index]).ljust(col_width_rtt_z)
+			else:
+				print "%i:" % (i), \
+				str(saltos[IPS][i]).ljust(col_width_ips_avg), \
+				str(saltos[RTTS][i]).ljust(col_width_rtts_acum), \
+				str(-1).ljust(col_width_rtt_delta), \
+				str(-1).ljust(col_width_rtt_z)
 		else: #No responde
 			print "ttl=%i:" % (i), \
-			str(saltos[IPS][i]).ljust(col_width_ips_avg), \
+			str("???").ljust(col_width_ips_avg), \
 			str(-1).ljust(col_width_rtts_acum), \
 			str(-1).ljust(col_width_rtt_delta), \
 			str(-1).ljust(col_width_rtt_z)
