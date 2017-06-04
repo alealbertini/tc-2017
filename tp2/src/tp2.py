@@ -88,7 +88,7 @@ class Hop():
 	
 def toString(pkt):
 	return pkt.summary()
-			
+	
 def main(): 
 	global args
 	parser = argparse.ArgumentParser(description='tdc tp2 parte 1')
@@ -96,6 +96,8 @@ def main():
 	parser.add_argument('--timeout', default=1.0, help = 'timeout')
 	parser.add_argument('--maxhops', default=31, help = 'maximo numero de saltos')
 	parser.add_argument('--maxiter', default=30, help = 'maximo numero iteraciones en una rafaga')
+	parser.add_argument('--graficar-rutas', dest='graficar-rutas', action='store_true', default=False, help = 'Graficar rutas')
+	parser.add_argument('--graficar-rtts', dest='graficar-rtts', action='store_true', default=False, help = 'Graficar rtts')
 	args = vars(parser.parse_args())
     
 	ttl = 1
@@ -114,7 +116,7 @@ def main():
 		respuestas=[[],[]] #[ips del ttl], [[rtts de esa ip]]]
 		
 
-		for x in range(0,iteraciones):
+		for x in range(0, iteraciones):
 			pid+=x
 			ans, unans = sr(IP(dst=args.get('dest'), ttl=ttl) / ICMP(id = pid), verbose=False, timeout=float(args.get('timeout')))
 		
@@ -265,11 +267,33 @@ def main():
 			"NA".ljust(col_width_rtt_delta), \
 			"NA".ljust(col_width_rtt_z)
 	
-	imgs = graficarMapas(points)
-	for i in imgs:
-		print i
-		webbrowser.open(i, new=0, autoraise=True)
+	if bool(args.get('graficar-rutas')):
+		imgs = graficarMapas(points)
+		for i in imgs:
+			print i
+			webbrowser.open(i, new=0, autoraise=True)
+	if bool(args.get('graficar-rtts')):
+		graficarInfo(points)
 		
+def graficarInfo(points):
+	ind = range(len(points))
+	fig, ax = plt.subplots()
+	ax.bar(ind, [x.RTT() for x in points], 0.75)
+	rtts=plt.axhline(y=1, label='tau', color='red', ls='--') # TODO
+	plt.legend(handles=[rtts])
+	plt.xticks(list(map(lambda x: x-0.4, ind)), [x.IP() for x in points], rotation=45)
+	ax.set_title("TODO")
+	ax.set_ylabel('rtts', color='b')
+	
+	#TODO
+	#ax_twinx = ax.twinx()
+	#s2 = np.sin(2 * np.pi * t)
+	#ax_twinx.plot(t, s2, 'r.')
+	#ax_twinx.set_ylabel('sin', color='r')
+	
+	plt.tight_layout()
+	plt.show()
+	
 def graficarMapas(points):
 	imgs = []
 	imgs.append(graficarMapa(points))
@@ -296,7 +320,7 @@ def graficarMapa(points):
 		if coords is None:
 			continue
 		(lt, ln) = coords
-		paths += "" if first else "|" + str(lt) + "," + str(ln)
+		paths += ("" if first else "|") + str(lt) + "," + str(ln)
 		markers += "&markers=color:blue|label:" + p.IP() + "|" + str(lt) + "," + str(ln)
 		first = False
 	return img + paths + markers
