@@ -6,6 +6,8 @@ import bisect
 import sys
 logging.getLogger("scapy.runtime").setLevel(logging.ERROR) 
 from scapy.all import *
+import requests
+import webbrowser
 
 args = None
 ECHO_REPLY = 0
@@ -57,6 +59,32 @@ tau = [
 	   	1.9209,
 	   	1.9220 	 		
 ]	
+
+class Hop():
+	def __init__(self, ip, rtt):
+		self._ip = ip
+		self._rtt = float(rtt)
+		self._outlier  = False
+		self._coords = None
+		
+	def IP(self):
+		return self._ip
+	def Coord(self):
+		if self._coords is None:
+			r = requests.get("http://freegeoip.net/json/"+self._ip)
+			resp = r.json()
+			lt = float(resp['latitude'])
+			ln = float(resp['longitude'])
+			if not (lt == 0 and ln == 0): 
+				self._coords = (lt,ln)
+		return self._coords
+		
+	def RTT(self):
+		return self._rtt
+	def setOutlier(self, outlier = True):
+		self._outlier = outlier
+	def isOutlier(self):
+		return self._outlier 
 	
 def toString(pkt):
 	return pkt.summary()
@@ -67,28 +95,26 @@ def main():
 	parser.add_argument('--dest', default='mit.edu', help = 'destino')
 	parser.add_argument('--timeout', default=1.0, help = 'timeout')
 	parser.add_argument('--maxhops', default=31, help = 'maximo numero de saltos')
+	parser.add_argument('--maxiter', default=30, help = 'maximo numero iteraciones en una rafaga')
 	args = vars(parser.parse_args())
     
 	ttl = 1
 	pid =  100+ttl
 	hops = int(args.get('maxhops'))
-	replay = False
-	saltos = [[],[]] # [Ips],[Promedio RTT de la rafaga]
+	iteraciones = int(args.get('maxiter'))
+	reply = False
+	saltos = [] # Hop[]
 	esta = [] # si la ip iesima esta considerada en el calculo de los delta. SI lo esta
 	#contiene al indice del arreglo rttsDelta. Si no, -1.
 	rttsZ = []
 	rttsDelta = [] # (Delta RTT, indice en saltos[IP])
-	outliers_list = []
-	
 
 	while hops > 0:
-		#print "TTL=", "%3d" % ttl,
-		#sys.stdout.flush()
-
+	
 		respuestas=[[],[]] #[ips del ttl], [[rtts de esa ip]]]
 		
 
-		for x in range(0,30):
+		for x in range(0,iteraciones):
 			pid+=x
 			ans, unans = sr(IP(dst=args.get('dest'), ttl=ttl) / ICMP(id = pid), verbose=False, timeout=float(args.get('timeout')))
 		
@@ -103,33 +129,23 @@ def main():
 						respuestas[RTTS][indice].append((rcv.time-snd.sent_time)*1000)	
 			
 					if rcv[ICMP].type == ECHO_REPLY:
-						replay = True
+						reply = True
 						break # llegamos
 
 		if not respuestas[IPS]: #Si nadie me respondio, no se cual es el hop.
-			#print "hi"
-			respuestas[IPS].append(-1)
-			respuestas[RTTS].append([0])
+				respuestas[IPS].append(-1)
+				respuestas[RTTS].append([0])
 
 		#calculo datos del de mayor aparicion.
 
-		max_indice = respuestas[RTTS].index(max(respuestas[RTTS]))
+		max_indice = respuestas[RTTS].index(max(respuestas[RTTS], key=len))
 		#print max_indice
 		#saco promedio.
 		media = np.mean(respuestas[RTTS][max_indice])
 
-		saltos[IPS].append(respuestas[IPS][max_indice])
-		saltos[RTTS].append(media)
-
-		#else:
-		#	for res in respuestas[IPS][INFO]: 
-		#		print "->", "\t", toString(res), "\n"
-
-		#	print "RTT Promedio: ",str(np.mean(respuestas[RTTS]))		
-
-
-		#sys.stdout.flush()
-		if replay:
+		saltos.append(Hop(respuestas[IPS][max_indice], media))
+	
+		if reply:
 			break
 
 		ttl = ttl + 1
@@ -137,26 +153,25 @@ def main():
 
 	####### Calculo diferencia entre saltos #####
 
-	max_rtts_Delta = next(x for x in saltos[RTTS] if x > 0)
-	indice_max_rtts_Delta = saltos[RTTS].index(max_rtts_Delta)
+	max_rtts_Delta = next(x for x in saltos if x.RTT() > 0) # DR: max? primero con valor logico?
+	indice_max_rtts_Delta = saltos.index(max_rtts_Delta)
 	#rttsDelta.append((max_rtts_Delta, indice_max_rtts_Delta))
 	for j in range(0,indice_max_rtts_Delta+1):
 		esta.append(-1)
 	#esta.append(-1)
 
-	for i in range(indice_max_rtts_Delta+1,len(saltos[RTTS])):
+	for i in range(indice_max_rtts_Delta+1,len(saltos)):
 
-		if saltos[IPS][i] == -1:	#no contestaron.
+		if saltos[i].IP() == -1:	#no contestaron.
 			esta.append(-1)
 			continue
-		dif = saltos[RTTS][i]-max_rtts_Delta #calculo dif entre saltos
+		dif = saltos[i].RTT()-max_rtts_Delta.RTT() #calculo dif entre saltos
 		if dif >= 0: #agrego solo si da mayor o igual.
 			rttsDelta.append((dif,i))
 			esta.append(len(rttsDelta)-1)	#appendeo el indice donde esta la iesima ip en rttsDelta
-			max_rtts_Delta = saltos[RTTS][i]
+			max_rtts_Delta = saltos[i]
 		else:
 			esta.append(-1)	
-
 
 	rttDeltaPromedio = np.mean(rttsDelta)  #promedio y desvio de los saltos.
 	rttDeltaDesvio = np.std(rttsDelta)	
@@ -167,16 +182,10 @@ def main():
 		#if esta[i]:
 		rttsZ.append(abs(rttsDelta[i][DELTA]-rttDeltaPromedio)/rttDeltaDesvio)
 
-
-
 	#calculo  de outliers
 	hay_outlier = True
 	rttsDelta_outlier = rttsDelta #para iterar en el otulier
 
-
-	#lista dado indice devuelva si es outlier
-	for x in range(0,len(saltos[IPS])):
-		outliers_list.append(0)
 
 	while(hay_outlier):
 		desv_abs = []
@@ -194,7 +203,7 @@ def main():
 			# del(rttsDelta_outlier[esta[desv_abs[-1][INDICE_IP]]])
 			#del(rttsDelta_outlier[esta[desv_abs[-1][INDICE_IP]]])
 			#Lo marco como outlier
-			outliers_list[desv_abs_mas_grande[INDICE_IP]]=1
+			saltos[desv_abs_mas_grande[INDICE_IP]].setOutlier(True)
 
 			#Lo borro de la lista de desvios absolutos
 			#rttsDelta_outlier = [(x for x in saltos[RTTS] if x[INDICE_IP] == desv_abs[-1][IND
@@ -205,7 +214,7 @@ def main():
 
 			#Recalculo promedo y desvio y vuelvo a empezar
 			temp = [y[DELTA] for y in rttsDelta_outlier]
-			promedio_outlier = np.mean(temp)
+			promedio_outlier = np.mean(temp) # DR ??
 			desvio_outlier = np.std(temp)
 
 		else: 
@@ -213,55 +222,84 @@ def main():
 
 	#imprimo resultados.		
 		
-	col_width_ips_avg = max(len(str(word)) for word in saltos[IPS]) + 2
-	col_width_rtts_acum = max(len(str(word)) for word in saltos[RTTS]) + 2
+	col_width_ips_avg = max(len(str(word.IP())) for word in saltos) + 2
+	col_width_rtts_acum = max(len(str(word.RTT())) for word in saltos) + 2
 	col_width_rtt_delta = max(len(str(word)) for word in rttsDelta) + 2
 	col_width_rtt_z = max(len(str(word)) for word in rttsZ) + 2
 
-	print "ttl=   ", \
+	print "TTL".ljust(8), \
 	"IP".ljust(col_width_ips_avg), \
 	"RTT".ljust(col_width_rtts_acum), \
-	"dRTT=".ljust(col_width_rtt_delta), \
-	"zdRTT=".ljust(col_width_rtt_z), \
+	"dRTT".ljust(col_width_rtt_delta), \
+	"zdRTT".ljust(col_width_rtt_z), \
 	"OUTLIER? "
 
-
 	imprimio = False
-	for i in range(len(saltos[IPS])):
+	points = []
+	for i in range(len(saltos)):
 		imprimio = True
-		responde = saltos[IPS][i] 
+		responde = saltos[i].IP() 
 			#Si responde y si lo hace, devuelve indice de esa ip en la lista de deltas.
 		if responde != -1: #responde
 			delta_index = esta[i]
 			if delta_index != -1: # se lo considera en el calculo del delta.
-
-				if outliers_list[i]:
-					print "%i:" % (i), \
-					str(saltos[IPS][i]).ljust(col_width_ips_avg), \
-					str(saltos[RTTS][i]).ljust(col_width_rtts_acum), \
-					str(rttsDelta[delta_index][DELTA]).ljust(col_width_rtt_delta), \
-					str(rttsZ[delta_index]).ljust(col_width_rtt_z), \
-					"OUTLIER!"
-				else:
-					#if i != indice_max_rtts_Delta:
-					print "%i:" % (i), \
-					str(saltos[IPS][i]).ljust(col_width_ips_avg), \
-					str(saltos[RTTS][i]).ljust(col_width_rtts_acum), \
-					str(rttsDelta[delta_index][DELTA]).ljust(col_width_rtt_delta), \
-					str(rttsZ[delta_index]).ljust(col_width_rtt_z)
+				print str(i).ljust(8), \
+				str(saltos[i].IP()).ljust(col_width_ips_avg), \
+				str(saltos[i].RTT()).ljust(col_width_rtts_acum), \
+				str(rttsDelta[delta_index][DELTA]).ljust(col_width_rtt_delta), \
+				str(rttsZ[delta_index]).ljust(col_width_rtt_z), \
+				"OUTLIER!" if saltos[i].isOutlier() else ""
+				points.append(saltos[i])
 			else:
-				print "%i:" % (i), \
-				str(saltos[IPS][i]).ljust(col_width_ips_avg), \
-				str(saltos[RTTS][i]).ljust(col_width_rtts_acum), \
+				print str(i).ljust(8), \
+				str(saltos[i].IP()).ljust(col_width_ips_avg), \
+				str(saltos[i].RTT()).ljust(col_width_rtts_acum), \
 				str(-1).ljust(col_width_rtt_delta), \
 				str(-1).ljust(col_width_rtt_z)
+				points.append(saltos[i])
+				
 		else: #No responde
-			print "ttl=%i:" % (i), \
+			print str(i).ljust(8), \
 			str("???").ljust(col_width_ips_avg), \
-			str(-1).ljust(col_width_rtts_acum), \
-			str(-1).ljust(col_width_rtt_delta), \
-			str(-1).ljust(col_width_rtt_z)
-
-
+			"NA".ljust(col_width_rtts_acum), \
+			"NA".ljust(col_width_rtt_delta), \
+			"NA".ljust(col_width_rtt_z)
+	
+	imgs = graficarMapas(points)
+	for i in imgs:
+		print i
+		webbrowser.open(i, new=0, autoraise=True)
+		
+def graficarMapas(points):
+	imgs = []
+	imgs.append(graficarMapa(points))
+	temp = []
+	for p in points:
+		if p.isOutlier():
+			if len(temp) > 1:
+				imgs.append(graficarMapa(temp))
+			temp = []
+		if not p in temp:
+			temp.append(p)
+		
+	if len(temp) > 1:
+		imgs.append(graficarMapa(temp))
+	return imgs
+	
+def graficarMapa(points):
+	img = "http://maps.googleapis.com/maps/api/staticmap?size=640x640&scale=2&path="
+	paths = ""
+	markers = ""
+	first = True
+	for p in points:
+		coords = p.Coord()
+		if coords is None:
+			continue
+		(lt, ln) = coords
+		paths += "" if first else "|" + str(lt) + "," + str(ln)
+		markers += "&markers=color:blue|label:" + p.IP() + "|" + str(lt) + "," + str(ln)
+		first = False
+	return img + paths + markers
+	
 if __name__ == '__main__':
     main()
