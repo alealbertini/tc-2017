@@ -176,7 +176,7 @@ def main():
 		dif = i.RTT() - ultimo_salto_delta.RTT()
 		if dif > 0:
 			i.setDeltaRTT(dif)
-		ultimo_salto_delta = i
+		ultimo_salto_delta = i # ponerle 1 tab mas para no saltear este nodo si dif < 0
 			
 	rttsDelta = [x.deltaRTT() for x in saltos if not x.deltaRTT() is None]
 	rttDeltaPromedio = np.mean(rttsDelta)  #promedio y desvio de los saltos.
@@ -204,7 +204,6 @@ def main():
 		if delta > (thompson * rttDeltaDesvio):
 			salto.setOutlier(True, thresholdCrossed = thompson * rttDeltaDesvio)
 		else: 
-			print salto.IP(), "no llego a", thompson * rttDeltaDesvio, "con", delta
 			hay_outlier = False
 
 	#imprimo resultados.		
