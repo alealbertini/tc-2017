@@ -176,7 +176,7 @@ def main():
 		dif = i.RTT() - ultimo_salto_delta.RTT()
 		if dif > 0:
 			i.setDeltaRTT(dif)
-		ultimo_salto_delta = i # ponerle 1 tab mas para no saltear este nodo si dif < 0
+			ultimo_salto_delta = i # ponerle 1 tab mas para no saltear este nodo si dif < 0
 			
 	rttsDelta = [x.deltaRTT() for x in saltos if not x.deltaRTT() is None]
 	rttDeltaPromedio = np.mean(rttsDelta)  #promedio y desvio de los saltos.
@@ -192,9 +192,17 @@ def main():
 	while(hay_outlier):
 		desv_abs = []
 		posibles_outliers = [x for x in saltos_analizables if not x.deltaRTT() is None and not x.isOutlier()]
+		
+		if len(posibles_outliers) < 3:
+			break
+			
+		rttsDelta = [x.deltaRTT() for x in posibles_outliers if not x.deltaRTT() is None]
+		rttDeltaPromedio = np.mean(rttsDelta)  #promedio y desvio de los saltos.
+		rttDeltaDesvio = np.std(rttsDelta)	
+		
 		#calculo la desvio absoluto de los delta que quedan y los ordeno.
 		for x in posibles_outliers:	
-			bisect.insort(desv_abs,(abs(x.deltaRTT()-rttDeltaPromedio), x))
+			bisect.insort(desv_abs,(abs(x.deltaRTT() - rttDeltaPromedio), x))
 	
 		#Calculo tau de Thompson
 		thompson = tau[len(desv_abs)-3]

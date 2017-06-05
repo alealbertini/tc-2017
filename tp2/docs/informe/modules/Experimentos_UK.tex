@@ -1,69 +1,76 @@
-\subsection{Gran Breta~na}
+\subsection{Gran Breta\~na}
 En esta instancia de experimentaci'on vamos a analizar las rutas a la universidad de Oxford, ubicada en Inglaterra, utilizando la direcci'on \textit{ox.ac.uk}. 
 El origen del mensaje es una direcci'on en Argentina y en un principio esperamos, basados en los mapas de cables submarinos, ver 2 o m'as saltos intercontinentales. Si bien
 existen caminos con 2 saltos intercontinentales, podria ser 3 si una ruta pasa por europa continental. 
 
-Utilizando 30 repeticiones por cada TTL conseguimos los siguientes datos
+Utilizando 30 repeticiones por cada TTL conseguimos los siguientes datos hasta que el mensaje llego a su destino.
 
-
-\begin{tabular}{ |p{2cm}||p{3cm}|p{3cm}|p{3cm}|  }
+\begin{tabular}{ |p{1cm}||p{3cm}|p{2cm}|p{2cm}|p{1.5cm}|  }
  \hline
- \multicolumn{4}{|c|}{Traceroute a Oxford} \\
+ \multicolumn{5}{|c|}{Traceroute a Oxford} \\
  \hline
- \textit{TTL} & \textit{IP}  & \textit{RTT} & $\delta$\textit{RTT} \\
+ \textit{TTL} & \textit{IP}  & \textit{RTT} & $\delta$\textit{RTT} & Outlier? \\
  \hline
- 0   & 192.168.1.1   & 2.18 ms &   -\\
- 1   & Sin respuesta  & - &   -\\
- 2   & Sin respuesta  & - &   -\\
- 3   & Sin respuesta  & - &   -\\
- 4   & Sin respuesta   & - &   -\\
- 5   & 200.89.161.97  & 31.49 ms &  29.3 ms\\
- 6   & 200.89.165.197  & 29.2 ms &  - \\
- 7   & 200.89.165.222  & 34.88 ms &  3.4 ms\\
- 8   & Sin respuesta  & - &   -\\
- 9   & 67.17.94.249 x & 24.74 ms &  22.7 ms\\
- 10   & Sin respuesta   & - &   -\\
- 11   & Sin respuesta   & - &   -\\
- 12   & 212.187.139.166  & 24.74 ms &  22.7 ms\\
- 13   & 146.97.35.197   & 24.74 ms &  22.7 ms\\
- 14   & 1146.97.33.2  & 24.74 ms &  22.7 ms\\
- 15   & 146.97.37.194   & 24.74 ms &  22.7 ms\\
- 16   & 193.63.108.94   & 24.74 ms &  22.7 ms\\
- 17   & 193.63.108.98   & 24.74 ms &  22.7 ms\\
- 18   & 193.63.109.90   & 24.74 ms &  22.7 ms\\
- 19   & Sin respuesta   & - &   -\\
- 20   & 192.76.32.62   & 24.74 ms &  22.7 ms\\
- 21   & 129.67.242.154   & 24.74 ms &  22.7 ms\\
+ 1   & 192.168.1.1   & 2.08 ms &   - &   \\
+ 2   & Sin respuesta  & - 	&   - &   \\
+ 3   & Sin respuesta  & - 	&   - &   \\
+ 4   & Sin respuesta  & - 	&   - &   \\
+ 5   & Sin respuesta  & - 	&   - &   \\
+ 6   & 200.89.161.77  & 31.76 ms &  29.67 ms &   \\
+ 7   & 200.89.165.197  & 36.68 ms &  4.93 ms &    \\
+ 8   & 200.89.165.222  & 33.3 ms &  - &   \\
+ 9   & Sin respuesta  & - &   - &   \\
+ 10   & 67.17.94.249 & 165.04 ms &  131.74 ms & Outlier \\
+ 11   & Sin respuesta   & - &   - &   \\
+ 12   & Sin respuesta   & - &   - &   \\
+13   &   212.187.139.166&    238.81 ms  &      73.77 ms  &    \\    
+14   &   146.97.35.197  &    246.8 ms   &      7.99 ms  &   \\       
+15   &   146.97.33.2   &     243.96 ms  &      -    &   \\         
+16   &   146.97.37.194   &   250.65 ms  &      6.69 ms  &    \\       
+17   &   193.63.108.94   &   243.61 ms  &      -   &    \\         
+18    &  193.63.108.98   &   247.05 ms    &     3.44 ms   &    \\       
+19   &   193.63.109.90  &    248.58 ms  &      1.53 ms  &     \\
+20   &   Sin respuesta              &    -          &      -    &       \\   
+21   &   192.76.32.66   &    245.76 ms  &      -     &       \\    
+22   &   129.67.242.154  &   223.77 ms   &     -   &     \\
  \hline
 \end{tabular}
 
+\smallskip
 
-Los paquetes con \textit{TTL} 1 a 4 pertenecientes al proveedor de internet no responden 
-(sabemos esto ya que los siguientes tambi'en pertenecen al proveedor) creemos que es porque son dispositivos que priorizan otras tareas y deciden no
-responder con un mensaje utilizando sus recursos m'as eficientemente.
+Los paquetes con \textit{TTL} 1 a 4 y 11 a 12  no responden con un mensaje de error que nos permita detectarlos.
+Creemos que es porque son dispositivos dentro de la red de los proveedores locales de internet que priorizan otras tareas y deciden no
+responder con un mensaje utilizando sus recursos m'as eficientemente. Algunos saltos pueden ser dispositivos optimizados para ciertas tareas
+las cuales no incluyen responder a \textit{TTL} excedidos o bien deciden no hacerlo para optimizar trafico. 
 
-TODO Mencionar outliers, saltos pelotudos que son menores que sus antecesores, saltos intercontinentales, clusters.
+Multiples saltos mostraron una anomalia com'un donde \textit{TTL} $i$ es menor a \textit{TTL} $i-1$, es decir que un mensaje tardo menos en hacer $i$ saltos
+que $i-1$ saltos lo cual no tiene ning'un sentido. Esto se puede explicar por las diferentes capacidades y trafico actual de los enlaces o tal vez por
+la ruta elegida para enviar el mensaje de error. En estos casos ignoramos esos saltos en el analisis. \\
 
-
-\begin{figure}[!h]
+Nuestro programa logr'o detectar un solo salto intercontinental en \textit{TTL} 10, correspondiente al un salto entre Argentina y Estados Unidos.
+Podemos ver esto con el siguiente grafico que muestra los saltos con sus respectivas IPs y los tiempos (RTT y RTT normalizados a $N(0,1)$ con el l'imite
+utilizado para detectar outliers.
+\begin{figure}[H]
 \centering
-\caption{TODO}
-\includegraphics[width=0.75\textwidth]{modules/oxford_rtts}
+\caption{Oxford RTTs por salto}
+\includegraphics[width=0.55\textwidth]{modules/oxford_rtts}
  \label{fig:oxford_rtts}
 \end{figure}
 
-
-\begin{figure}[!h]
+En el siguiente grafico podemos ver el camino completo que el mensaje recorri'o para llegar a su destino en Oxford. Paso por Estados Unidos y luego directo a 
+Inglaterra. Nuestro software no logra detectar este enlace como intercontinental, en la gran mayoria de las pruebas el l'imite impuesto por el algoritmo de
+Cimbala esta muy cerca de los valores de \textit{RTT} pero no logran pasarlo.
+\begin{figure}[H]
 \centering
-\caption{TODO}
-\includegraphics[width=0.75\textwidth]{modules/oxford_path_1}
+\caption{Ruta a Oxford}
+\includegraphics[width=0.55\textwidth]{modules/oxford_path_1}
  \label{fig:ruta_oxford_1}
 \end{figure}
 
-
-\begin{figure}[!h]
+El servicio de geolocalizaci'on usado logra identificar la ruta desde Londres a Oxford pero no todos los puntos dentro de la Argentina.
+\begin{figure}[H]
 \centering
-\caption{TODO}
-\includegraphics[width=0.75\textwidth]{modules/oxford_path_2}
+\caption{Ruta Londres-Oxford}
+\includegraphics[width=0.55\textwidth]{modules/oxford_path_2}
  \label{fig:ruta_oxford_2}
 \end{figure}
