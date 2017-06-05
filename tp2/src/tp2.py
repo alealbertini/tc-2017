@@ -197,8 +197,8 @@ def main():
 			break
 			
 		rttsDelta = [x.deltaRTT() for x in posibles_outliers if not x.deltaRTT() is None]
-		rttDeltaPromedio = np.mean(rttsDelta)  #promedio y desvio de los saltos.
-		rttDeltaDesvio = np.std(rttsDelta)	
+		#rttDeltaPromedio = np.mean(rttsDelta)  #promedio y desvio de los saltos.
+		#rttDeltaDesvio = np.std(rttsDelta)	
 		
 		#calculo la desvio absoluto de los delta que quedan y los ordeno.
 		for x in posibles_outliers:	
