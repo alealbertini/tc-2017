@@ -2,6 +2,8 @@
 
 En esta instancia de experimentaci'on vamos a analizar las rutas a la universidad de UNAM, ubicada en Mexico, utilizando la direcci'on \textit{unam.edu}. 
 
+Utilizando 30 repeticiones por cada \textit{TTL}  conseguimos los siguientes datos hasta que el mensaje llego a su destino.
+
 \begin{tabular}{ |p{1cm}||p{3cm}|p{2cm}|p{2cm}|p{1.5cm}|  }
  \hline
  \multicolumn{5}{|c|}{Traceroute a UNAM} \\
@@ -28,13 +30,21 @@ En esta instancia de experimentaci'on vamos a analizar las rutas a la universida
 \end{tabular}
 
 \smallskip
-    
+
+Salvo el tramo entre \textit{TTL} 1 y 4, correspondiente a nodos del proveedor de internet del origen, no hay muchos saltos sin respuestas. El camino total es relativamente largo si consideramos la distancia geografica con Mexico.\\
+
+
+El analisis de RTTs muestra la misma anomalia exhibida en otros experimentos donde algunos nodos tardan m'as en responder que sus antecesores.
+ 
 \begin{figure}[H]
 \centering
 \caption{UNAM delta RTTs y ZRTT}
 \includegraphics[width=0.55\textwidth]{modules/unam_rtts_2}
  \label{fig:unam_rtts_2}
 \end{figure}
+
+
+Solo un nodo logra pasar el limite y ser clasificado como outlier, como veremos en la siguiente figura, corresponde a un salto hasta EEUU.
 
 \begin{figure}[H]
 \centering
@@ -43,7 +53,8 @@ En esta instancia de experimentaci'on vamos a analizar las rutas a la universida
  \label{fig:unam_rtts}
 \end{figure}
 
-Mencionar que pasa por USA
+El servicio de geolocalizaci'on ubica el salto de EEUU en kansas pero es solo la direcci'on administrativa, el salto es a miami.
+
 \begin{figure}[H]
 \centering
 \caption{Ruta a UNAM}
@@ -51,7 +62,7 @@ Mencionar que pasa por USA
  \label{fig:ruta_unam_1}
 \end{figure}
 
-LPM UNAM no queda en el desierto de sonora, geolocation fallo
+El detalle en Mexico clasifica mal el ultimo salto el cual deberia estar en la ciudad de mexico, no en sonora, pero m'as alla de ello muestra bastante bien los saltos internos.
 \begin{figure}[H]
 \centering
 \caption{Ruta en Mexico}
