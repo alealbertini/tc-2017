@@ -13,33 +13,43 @@ por Inglaterra) y un último salto de Ingleterra a España. Esto sucede y lo pod
 Los datos de la tabla a continuación, fueron el resultado de 30 iteraciones para cada TTL, hasta la universidad de Madrid: \\
 
 
-\begin{tabular}{ |p{2cm}||p{3cm}|p{3cm}|p{3cm}|p{3cm}|   }
+\begin{tabular}{ |p{2cm}||p{3cm}|p{3cm}|p{3cm}|p{3cm}|p{3cm}|   }
  \hline
- \multicolumn{5}{|c|}{Traceroute a Madrid, España} \\
+ \multicolumn{6}{|c|}{Traceroute a Madrid, España} \\
  \hline
- \textit{TTL} & \textit{IP}  & \textit{RTT} & $\delta$\textit{RTT} & \textit{z}$\delta$\textit{RTT}\\
+ \textit{TTL} & \textit{IP}  & \textit{RTT} & $\delta$\textit{RTT} & \textit{z}$\delta$\textit{RTT}& \textit{Outlier?}\\
  \hline
- 1   & Sin respuesta  & - &   - & -\\
- 2   & 10.10.10.1 & 5.0 ms &   - & -\\
- 3   & 190.3.128.11  & 13.97 ms & 8.97 ms & 0.79  \\
- 4   & 190.3.128.34   & 13.16 ms &   - & -\\	
- 5   & 64.215.24.153  & 18.03 ms &  4.87 ms & 0.88\\
- 6   &  67.17.94.249 & 140.06 ms &  122.03 ms & 1.57\\
- 7   & Sin respuesta  & - &  - & -\\
- 8   & 4.69.210.222  & 245.33 ms & 105.27 ms &  1.22\\
- 9   & 4.69.210.222 & 245.29 ms &  - & -\\
- 10   & 213.242.113.78   & 260.68 ms & 15.39 ms & 0.66\\
- 11   & 130.206.245.1   & 258.76 ms & 25.08 ms & 0.46\\
- 12   & 130.206.212.106  & 275.93 ms &  - & -\\
- 13   & Sin respuesta  & - & - & -\\
- 14   & Sin respuesta  & - & - & -\\
- 15   & Sin respuesta  & - & - & -\\
- 16   & Sin respuesta  & - & - & -\\
- 17   & Sin respuesta  & - & - & -\\
- 18   & Sin respuesta  & - & - & -\\
- 19   & Sin respuesta  & - & - & -\\
- 20   & Sin respuesta  & - & - & -\\
- 21   & Sin respuesta  & - & - & -\\
+ 1   & Sin respuesta  & - &   - & - & -\\
+ 2   & 10.10.10.1 & 4.44 ms &   - & - & -\\
+ 3   & 190.3.128.11  & 16.21 ms & 11.77 ms & 0.94 & - \\
+ 4   & 190.3.128.34   & 88.34 ms &  72.13 & 0.75 & OUTLIER!\\	
+ 5   & 64.215.24.153  & 26.15 ms &  - & - & -\\
+ 6   &  67.17.94.249 & 135.03 ms &  46.69 ms & 0.04 & -\\
+ 7   & Sin respuesta  & - &  - & - & -\\
+ 8   & 4.69.210.222  & 241.96 ms & 106.93 ms &  1.73 & OUTLIER!\\
+ 9   & 4.69.210.222 & 272.3 ms &  30.35 ms & 0.42 & -\\
+ 10   & 213.242.113.78   & 276.11 ms & 3.8 ms & 1.17 & -\\
+ 11   & 130.206.245.1   & 243.12 ms & - & - & -\\
+ 12   & 130.206.212.106  & 244.43 ms &  - & - & -\\
+ 13   & Sin respuesta  & - & - & - & -\\
+ 14   & Sin respuesta  & - & - & - & -\\
+ 15   & Sin respuesta  & - & - & - & -\\
+ 16   & Sin respuesta  & - & - & - & -\\
+ 17   & Sin respuesta  & - & - & - & -\\
+ 18   & Sin respuesta  & - & - & - & -\\
+ 19   & Sin respuesta  & - & - & - & -\\
+ 20   & Sin respuesta  & - & - & - & -\\
+ 21   & Sin respuesta  & - & - & - & -\\
+ 22   & Sin respuesta  & - & - & - & -\\
+ 23   & Sin respuesta  & - & - & - & -\\
+ 24   & Sin respuesta  & - & - & - & -\\
+ 25   & Sin respuesta  & - & - & - & -\\
+ 26   & Sin respuesta  & - & - & - & -\\
+ 27   & Sin respuesta  & - & - & - & -\\
+ 28   & Sin respuesta  & - & - & - & -\\
+ 29   & Sin respuesta  & - & - & - & -\\
+ 30   & Sin respuesta  & - & - & - & -\\
+ 31   & Sin respuesta  & - & - & - & -\\
  \hline
 \end{tabular} \\ \\
 
@@ -74,18 +84,23 @@ puede pasar que el servidor que almacena la url de la universidad se encuentre e
 Conclusiones: \\ \\
 
 El primer salto intercontinental es del TTL=6, de Argentina a Estados Unidos. Esto se puede observar en la diferencia de mili segundos entre 
-el RTT de la IP 64.215.24.153 y la IP 67.17.94.249, ya que el primero tarda un promedio de 18.03 ms en responder y el segundo tarda 140.06 ms,
+el RTT de la IP 64.215.24.153 y la IP 67.17.94.249, ya que el primero tarda un promedio de 26.15 ms en responder y el segundo tarda 135.03 ms,
 una diferencia considerable. \\ \\
 
-El TTL=8 tiene 105.27 ms de diferencia con respecto al anterior y además cambia de IP. Al tener un RTT muy alto con respecto al anterior,
+El TTL=8 tiene 106.93 ms de diferencia con respecto al anterior y además cambia de IP. Al tener un RTT muy alto con respecto al anterior,
 podemos llegar a suponer que el paquete podría llegar a estar en una ciudad costera de Estados Unidos, para después poder dar el salto a Inglaterra,
 ya que salte directo de Colorado o Kansas hasta Inglaterra no tendría mucho sentido. \\ \\
 
-El segundo salto intercontinental es el de la IP 213.242.113.78 \\ \\
+El segundo salto intercontinental es el de la IP 213.242.113.78 . Esto se puede deducir gracias al gráfico saltos vs RTT's, que muestra como pega un
+salto la función roja que mide el zRTT, en el gráfico 'saltos vs dRTTs'.\\ \\
 
-El tercer salto intercontinental es de la IP 130.206.245.1 con un RTT de 25.08 ms de diferencia con respecto al anterior, esto tiene 
-sentido ya que desde Pilar a Capital Federal hay aproximadamente 18ms de RTT y de londres a Madrid hay 25ms de RTT, si bien es un enlace subacuático,
-las distancias no son demasiado extensas. \\ \\
+El tercer salto intercontinental es de la IP 130.206.245.1 donde se puede apreciar una diferencia en el gráfico de barras 
+(saltos vs RTTs) con respecto a la IP anterior (213.242.113.78), si bien es un enlace subacuático,
+las distancias no son demasiado extensas como para que haya una diferencia muy grande en cuanto a tiempos. \\ \\
+
+Para TTL >= 13 no hay respuestas porque bastaron con 12 saltos (hops) para llegar a la ip de la Universidad de Madrid. Por ese motivo, 
+no hay respuestas para esos casos. \\ \\ 
+
 
 
 
@@ -101,9 +116,18 @@ las distancias no son demasiado extensas. \\ \\
 \begin{figure}[!h]
 \centering
 \caption{Saltos vs RTT}
-\includegraphics[width=0.75\textwidth]{modules/grafico-rtt-EU}
- \label{fig:grafico-rtt-EU}
+\includegraphics[width=0.75\textwidth]{modules/EU-saltos-rtt}
+\label{fig:EU-saltos-rtt}
 \end{figure}
+
+
+\begin{figure}[!h]
+\centering
+\caption{Saltos vs dRTT}
+\includegraphics[width=0.75\textwidth]{modules/EU-saltos-drtt}
+\label{fig:EU-saltos-drtt}
+\end{figure}
+
 
 \pagebreak
 
