@@ -26,7 +26,7 @@ Los datos de la tabla a continuación, fueron el resultado de 30 iteraciones par
  5   & 64.215.24.153  & 18.03 ms &  4.87 ms & 0.88\\
  6   &  67.17.94.249 & 140.06 ms &  122.03 ms & 1.57\\
  7   & Sin respuesta  & - &  - & -\\
- 8   & 4.69.210.222  & 245.33 ms & 105.27 &  1.22\\
+ 8   & 4.69.210.222  & 245.33 ms & 105.27 ms &  1.22\\
  9   & 4.69.210.222 & 245.29 ms &  - & -\\
  10   & 213.242.113.78   & 260.68 ms & 15.39 ms & 0.66\\
  11   & 130.206.245.1   & 258.76 ms & 25.08 ms & 0.46\\
@@ -41,16 +41,54 @@ Los datos de la tabla a continuación, fueron el resultado de 30 iteraciones par
  20   & Sin respuesta  & - & - & -\\
  21   & Sin respuesta  & - & - & -\\
  \hline
-\end{tabular}
+\end{tabular} \\ \\
 
 
 Análisis de la tabla de RTT's: \\ \\
 
 La primera respuesta que obtenemos es para TTL=1, la IP 10.10.10.1 se corresponde con el router Wi-Fi que se está utilizando en el hogar del 
-integrante que corrió el experimento. Se corresponde con una red privada que no es visible para afuera y que utiliza protocolo IP versión 4 (IPv4). \\
+integrante que corrió el experimento. Se corresponde con una red privada que no es visible para afuera y que utiliza protocolo IP versión 4 (IPv4). \\ \\
+
 Las IP's de TTL=3 y TTL=4 se corresponden con las IP's de la Cooperativa Telefonica de Telviso, proveedor de internet ubicado en 
-la localidad de Del Viso, partido de Pilar (zona norte GBA). \\
-La IP de TTL=5 se corresponde con un servidor de la ciudad de Denver, Colorado. Esto se dedujo buscando la ip en internet. \\
+la localidad de Del Viso, partido de Pilar (zona norte GBA). \\ \\
+
+La IP de TTL=5 se corresponde con un servidor ubicado en Capital Federal, llamado Level 3 Communications Inc. Esta empresa es una 
+compañía multinacional estadounidense de telecomunicaciones y proovedor de servicios de Internet radicado en Broomfield, Colorado. A eso se debe que  
+después de este salto, el paquete de IP va hacia Estados Unidos.  \\ \\
+
+Para el TTL=6 se encontró que la IP se corresponde con un servidor en la ciudad de Wichita, perteneciente al estado de Kansas, EEUU. 
+Esto se dedujo buscando la ip en internet. En la página http://myip.es\\ \\
+
+Para los TTL=8 y TTL=9 la IP se corresponde todavía en territorio de los Estados Unidos. \\ \\
+
+Luego, la IP 213.242.113.78 se ubica en un servidor de Londres, Inglaterra. A eso se debe la gran diferencia que se puede observar en el 
+gráfico de Saltos vs RTT's del desvío standart. \\ \\
+
+La IP 130.206.245.1 con TTL=11 se ubica en la ciudad de Madrid, España. Este es el tercer salto intercontinental que se observa 
+(los dos anteriores eran de Argentina a Estados Unidos y de este último a Londres). \\ \\
+
+La última IP se encuentra en Valencia, España. Si bien la Universidad Complutense de Madrid se ubica precisamente en Madrid, 
+puede pasar que el servidor que almacena la url de la universidad se encuentre en otro lugar, esto se puede deber a costos o cuestiones logisticas.\\ \\ \\
+
+
+Conclusiones: \\ \\
+
+El primer salto intercontinental es del TTL=6, de Argentina a Estados Unidos. Esto se puede observar en la diferencia de mili segundos entre 
+el RTT de la IP 64.215.24.153 y la IP 67.17.94.249, ya que el primero tarda un promedio de 18.03 ms en responder y el segundo tarda 140.06 ms,
+una diferencia considerable. \\ \\
+
+El TTL=8 tiene 105.27 ms de diferencia con respecto al anterior y además cambia de IP. Al tener un RTT muy alto con respecto al anterior,
+podemos llegar a suponer que el paquete podría llegar a estar en una ciudad costera de Estados Unidos, para después poder dar el salto a Inglaterra,
+ya que salte directo de Colorado o Kansas hasta Inglaterra no tendría mucho sentido. \\ \\
+
+El segundo salto intercontinental es el de la IP 213.242.113.78 \\ \\
+
+El tercer salto intercontinental es de la IP 130.206.245.1 con un RTT de 25.08 ms de diferencia con respecto al anterior, esto tiene 
+sentido ya que desde Pilar a Capital Federal hay aproximadamente 18ms de RTT y de londres a Madrid hay 25ms de RTT, si bien es un enlace subacuático,
+las distancias no son demasiado extensas. \\ \\
+
+
+
 
 
 
