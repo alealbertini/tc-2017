@@ -80,7 +80,7 @@ class Hop():
 		return self._coords
 		
 	def RTT(self):
-		return self._rtt
+		return self._rtt 
 		
 	def TTL(self):
 		return self._ttl
@@ -106,6 +106,8 @@ class Hop():
 	
 	def thresholdCrossed(self):
 		return self._threshold 
+	def name(self):
+		return "TTL " + str(self._ttl) + "(" + self._ip + ")"
 		
 def toString(pkt):
 	return pkt.summary()
@@ -117,6 +119,7 @@ def main():
 	parser.add_argument('--timeout', default=1.0, help = 'timeout')
 	parser.add_argument('--maxhops', default=31, help = 'maximo numero de saltos')
 	parser.add_argument('--maxiter', default=30, help = 'maximo numero iteraciones en una rafaga')
+	parser.add_argument('--verbose', dest='verbose', action='store_true', default=False, help = 'Salida verbose')
 	parser.add_argument('--graficar-rutas', dest='graficar-rutas', action='store_true', default=False, help = 'Graficar rutas')
 	parser.add_argument('--graficar-rtts', dest='graficar-rtts', action='store_true', default=False, help = 'Graficar rtts')
 	args = vars(parser.parse_args())
@@ -132,8 +135,8 @@ def main():
 	
 		respuestas=[[],[]] #[ips del ttl], [[rtts de esa ip]]]
 		
-
-		for x in range(0, iteraciones):
+		maxVisto = 0
+		for x in range(0, iteraciones*2):
 			pid += x
 			ans, unans = sr(IP(dst=args.get('dest'), ttl=ttl) / ICMP(id = pid), verbose=False, timeout=float(args.get('timeout')))
 		
@@ -149,15 +152,19 @@ def main():
 			
 					if rcv[ICMP].type == ECHO_REPLY:
 						reply = True
-						break # llegamos
-
+						
+					maxVisto = len(max(respuestas[RTTS], key=len))
+					if maxVisto > iteraciones:
+						break
+						
 		if not respuestas[IPS]: #Si nadie me respondio, no se cual es el hop.
 			saltos.append(Hop(ttl, None, None))
 		else:
 			#calculo datos del de mayor aparicion.
 			max_indice = respuestas[RTTS].index(max(respuestas[RTTS], key=len))
-			media = np.percentile(respuestas[RTTS][max_indice], 90)
-			saltos.append(Hop(ttl, respuestas[IPS][max_indice], media))
+			media = np.mean(respuestas[RTTS][max_indice])
+			hop = Hop(ttl, respuestas[IPS][max_indice], media)
+			saltos.append(hop)
 			
 		if reply:
 			break
@@ -192,13 +199,14 @@ def main():
 	while(hay_outlier):
 		desv_abs = []
 		posibles_outliers = [x for x in saltos_analizables if not x.deltaRTT() is None and not x.isOutlier()]
-		
-		if len(posibles_outliers) < 3:
+		if bool(args.get('verbose')):
+			print "posible outliers", [(x.IP(), x.deltaRTT()) for x in posibles_outliers]
+		if len(posibles_outliers) < 5:
 			break
 			
 		rttsDelta = [x.deltaRTT() for x in posibles_outliers if not x.deltaRTT() is None]
-		#rttDeltaPromedio = np.mean(rttsDelta)  #promedio y desvio de los saltos.
-		#rttDeltaDesvio = np.std(rttsDelta)	
+		rttDeltaPromedio = np.mean(rttsDelta)  #promedio y desvio de los saltos.
+		rttDeltaDesvio = np.std(rttsDelta)	
 		
 		#calculo la desvio absoluto de los delta que quedan y los ordeno.
 		for x in posibles_outliers:	
@@ -206,9 +214,13 @@ def main():
 	
 		#Calculo tau de Thompson
 		thompson = tau[len(desv_abs)-3]
-
+		
+			
 		#outlier. Si el mas grande es mayor a tau por el desvio.
 		(delta, salto) = desv_abs[-1]
+		if bool(args.get('verbose')):
+			print "comparando", delta, "con",thompson ,"*", rttDeltaDesvio, "=", thompson * rttDeltaDesvio, \
+			 ".Se uso rttDeltaPromedio=", rttDeltaPromedio
 		if delta > (thompson * rttDeltaDesvio):
 			salto.setOutlier(True, thresholdCrossed = thompson * rttDeltaDesvio)
 		else: 
@@ -245,7 +257,8 @@ def main():
 			print i
 			webbrowser.open(i, new=0, autoraise=True)
 	if bool(args.get('graficar-rtts')):
-		graficarInfo(points)
+		graficar_rtts(points)
+		graficar_drtts(points)
 		
 def numDisplay(obj, default = "-", suffix = ""):
 	if obj is None:
@@ -257,26 +270,36 @@ def strDisplay(obj, default = "-", suffix = ""):
 		return default
 	return str(obj) + suffix
 	
-def graficarInfo(points):
+def graficar_rtts(points):
 	ind = range(len(points))
 	fig, ax = plt.subplots()
 	ax.bar(ind, [x.RTT() for x in points], 0.75)
-	tau = [x.thresholdCrossed() for x in points if x.isOutlier()]
-	if len(tau) > 0:
-		minTau = min(tau)
-		tauLine = plt.axhline(y=tau, label='threshold', color='green', ls='--')
-		plt.legend(handles=[tauLine])
-	plt.xticks(list(map(lambda x: x-0.4, ind)), [x.IP() for x in points], rotation=45)
+	plt.xticks(list(map(lambda x: x-0.4, ind)), [x.name() for x in points], rotation=45)
 	ax.set_title("Saltos vs RTTs")
 	ax.set_ylabel('RTT (ms)', color='b')
 	
+	plt.tight_layout()
+	plt.show()
+def graficar_drtts(allPoints):
+	points = [x for x in allPoints if not x.deltaRTT() is None]
+	ind = range(len(points))
+	fig, ax = plt.subplots()
+	ax.bar(ind, [x.deltaRTT() for x in points], 0.75)
+	taus = [x.thresholdCrossed() for x in points if x.isOutlier()]
+	if len(taus) > 0:
+		tau = max(taus)
+		tauLine = plt.axhline(y=tau, label='threshold', color='green', ls='--')
+		plt.legend(handles=[tauLine])
+	plt.xticks(list(map(lambda x: x-0.4, ind)), [x.name() for x in points], rotation=45)
+	ax.set_title("Saltos vs dRTTs")
+	ax.set_ylabel('dRTT (ms)', color='b')
+	
 	ax_twinx = ax.twinx()
 	ax_twinx.plot(ind, [0 if x.ZRTT() is None else x.ZRTT() for x in points], 'r-', linewidth=3)
-	ax_twinx.set_ylabel('ZRTT (ms)', color='r')
+	ax_twinx.set_ylabel('zRTT (ms)', color='r')
 	
 	plt.tight_layout()
 	plt.show()
-	
 def graficarMapas(points):
 	imgs = []
 	imgs.append(graficarMapa(points))
