@@ -1,3 +1,9 @@
 \section{Conclusión}
 
+En esta sección presentamos una serie de conclusiones que arrojaron la experimentación del presente trabajo.\\
 
+La primera observación es la presencia en todos los casos de dos anomalías \cite{Anomalias}. En todas las experiencias hubo routers que no contestaron el Time EXceeded. Esto según el paper citado se puede deber a filtros de firewall u otros mecanismos. Por otro lado siempre existieron saltos cuya diferencia en RTT con el o los anteriores es negativa. Esto puede deberse a distintos manejos del sistema que administra las redes, diferentes velocidades de procesamiento o prioridad de las mismas entre otros motivos. Tambien puede suceder en el caso de grupos de IPs donde la difernecia entre uno y el otro no es tan notable.\\
+
+Por otra parte, el geolocalizador resultó ser bastante confiable aunque no tan preciso. En general suele aproximar bastante correctamente los continentes aunque a veces confunde dueño del backbone con la ubicación del mismo.\\
+
+El método de Cimbala para detectar outlieres y así marcar a los saltos intercontinentales subacuáticos arrojó grandes resultados. Se debe tener cuidado con los nodos que no responden porque quedan menos para el cálculo del mismo y tambien con los negativos. Sin embargo, la definción recursiva de la red parece ser efectiva para hallar los traceroutes impelmentados en ICMP. No apreciamos diferencias significativas en detectar los saltos según el tamaño de la ruta.
