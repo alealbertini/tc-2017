@@ -4,7 +4,7 @@ En este trabajo práctico se desarrolla una herramienta para realizar un \textit
 
 Con este fin se decidió hacer uso del protocolo ICMP (\textit{Internet Control Message Protocol}) en el cual se basan algunas implementaciones de traceroute.\\
 
-El protocolo ICMP tiene como objetivo brindar mensajes de control dentro de una comunicación\cite{ICMP}. Utiliza de soporto a IP y debería ser impelmentado por todo módulo IP. No hay garantía que el datagrama o el mensaje de control llegue a destino. Los mensajes ICMP se envían a la dirección fuente del datagrama IP que generó el mensaje y ningun mensaje ICMP reporta a otro mensaje ICMP. Una de los motivos más comunes de intercambio de estos paquetes ICMP se deben a que el destino no puede ser alcanzado, o a que el TTL (Time To Live) asociado al paquete IP en el cual se monta llega a cero.\\
+El protocolo ICMP tiene como objetivo brindar mensajes de control dentro de una comunicación\cite{ICMP}. Utiliza de soporte a IP y debería ser impelmentado por todo módulo IP. No hay garantía que el datagrama o el mensaje de control llegue a destino. Los mensajes ICMP se envían a la dirección fuente del datagrama IP que generó el mensaje y ningun mensaje ICMP reporta a otro mensaje ICMP. Una de los motivos más comunes de intercambio de estos paquetes ICMP se deben a que el destino no puede ser alcanzado, o a que el TTL (Time To Live) asociado al paquete IP en el cual se monta llega a cero.\\
 
 Un paquete que utiliza el protocolo ICMP posee un header de 8 bytes y una porción de datos de tamaño variable. El header cuenta con los siguientes campos: 
 

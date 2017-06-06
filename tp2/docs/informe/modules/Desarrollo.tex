@@ -1,6 +1,6 @@
 \section{Desarrollo}
 
-La implementación del traceroute con el cual se realizó este trabajo se basa en la técnica de TTls incrementales. Comenzando con TTL = 1 (el router más cercano, primer salto) mandar paquetes Echo Requeste al destino mientras se sigan recibiendo mensajes de Time Exceeded. Por cada uno se recibe se incrementa en 1 el TTL hasta recibir un Echo Reply o en su defecto hasta el máximo TTL especificado en el protocolo IP. \\
+La implementación del traceroute con el cual se realizó este trabajo se basa en la técnica de TTls incrementales. Comenzando con TTL = 1 (el router más cercano, primer salto) mandar paquetes Echo Request al destino mientras se sigan recibiendo mensajes de Time Exceeded. Por cada uno que se recibe se incrementa en 1 el TTL hasta recibir un Echo Reply o en su defecto hasta el máximo TTL especificado en el protocolo IP. \\
 Para asegurarnos de obtener una muestra amplia, se envían por cada TTL rafagas de 30 paquetes. Cada uno en caso de ser respondido, devuelve una IP y el RTT hasta eso salto. Se determina cuál es la dirección que más veces responde en ese salto y se obtiene un promedio de los RTT que reportó. Este valor es el que guardamos para cada ese salto.\\
 
 Tras la recepción de un Echo Reply, se calcula 
@@ -16,8 +16,8 @@ las leyes de la física.\\
 
 Una vez determinado los RTT entre saltos, se calcula su promedio $\overline{RTT}$ y desvío standard $\sigma$. Esto se utilizan para el análisis estadístico de los outliers.\\
 
-Como las conexiones intercontinentales deberían ilustrar saltos empinados en relación a los locales,se espera que estos seean represnetados como puntos/datos fuera de cierto patron observado en la muestra.
-Para ello, nos basamos en el descarte de outliers propuesto por Cibala \cite{Cimbala}. 
+Como las conexiones intercontinentales deberían ilustrar saltos empinados en relación a los locales,se espera que estos sean representados como puntos/datos fuera de cierto patrón observado en la muestra.
+Para ello, nos basamos en el descarte de outliers propuesto por Cimbala \cite{Cimbala}. 
 Primero calculamos el desvío absoluto $\delta_{i}=|\delta_{i}-\overline{RTT}|$ para cada salto   $\Delta_{i}$.
 Luego calculamos $ZRTT_{i}=\delta_{i}/\sigma$. Tomamos el que máximice $ZRTT$ entre todos los saltos y lo comparamos con la función Tao de Thompson evaluada en $n = |saltos|$ (saltos válidos como se propuso arriba), utilizando la tabla provista en la publicación.\\
 
@@ -31,16 +31,16 @@ Comprobaremos experimentalmente el grado de acierto de este método de descarte 
 
 \subsection{Implementación}
 
-Se implementó lo detallado en la subsección anterior gracias a la librería Scapy de Python \cite{Scapy}. Haciendo uso de la función sr (send and recieve) se envían paquetes \textit{Echo Request} y espera la respuesta. Para acotar el tiempo de esta, se introduce un timeout cuyo valor por defecto de un segundo. Se envían 30 paquetes por cada TTL, se calcula el de mayor aparición en cada caso y su promedio.\\
+Se implementó lo detallado en la subsección anterior gracias a la librería Scapy de Python \cite{Scapy}. Haciendo uso de la función sr (send and recieve) se envían paquetes \textit{Echo Request} y espera la respuesta. Para acotar el tiempo de ésta, se introduce un timeout cuyo valor por defecto es de un segundo. Se envían 30 paquetes por cada TTL, se calcula el de mayor aparición en cada caso y su promedio.\\
 
-Almacenando esta información en un arreglo/diccionario se calcula los $\Delta RTT$, promedio y desvío standard con la libreria \textit{numpy} y luego se determinan los outliers como se especifica arriba.\\
+Almacenando ésta información en un arreglo/diccionario se calcula los $\Delta RTT$, promedio y desvío standard con la librería \textit{numpy} y luego se determinan los outliers como se especifica arriba.\\
 
 La herramienta imprime en pantalla para cada TTL o salto, el $\overline{RTT_{i}}$, $\delta_{i}$ y si es outlier. 
 
 \subsection{Condiciones de experimentación e hipótesis}
 
-Se experimentaron enviando paquets a 4 universidades de 3 continentes (Norte América, Europa y Asia). La razon por la cual se testea el enlace a universidades es porque es muy probable que estas contesten los pedidos.\\
+Se experimentaron enviando paquetes a 4 universidades de 3 continentes (Norte América, Europa y Asia). La razón por la cual se testea el enlace a universidades es porque es muy probable que estas contesten los pedidos.\\
 
-Se esperan al menos dos saltos intercontinentales en todos los casos, con notorias diferencias respecto a otros saltos. Tambien se espera que el RTT hasta Asia sea mayor que a Norte América y que a mayor cantidad de routers que respondan mayor será la precisión en tiempo y ubicación de la ruta trazada por el intercambio de mensajes ICMP.
+Se esperan al menos dos saltos intercontinentales en todos los casos, con notorias diferencias respecto a otros saltos. También se espera que el RTT hasta Asia sea mayor que a Norte América y que a mayor cantidad de routers que respondan mayor será la precisión en tiempo y ubicación de la ruta trazada por el intercambio de mensajes ICMP.
 
 
