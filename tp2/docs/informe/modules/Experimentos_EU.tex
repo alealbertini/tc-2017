@@ -102,6 +102,19 @@ Para TTL >= 13 no hay respuestas porque bastaron con 12 saltos (hops) para llega
 no hay respuestas para esos casos. \\ \\ 
 
 
+El porcentaje de saltos que no responden los Time exceeded es: 21 paquetes con cierto TTL que no responden / 31 TTLs distintos = 0.68\%.  \\ \\
+
+
+En total para esta instancia, se encontraron 2 outliers posibles según el método de Cimbala. Uno es del TTL=4 y el otro para el TTL=8. 
+Estos outliers son con respecto a la diferencia entre el RTT actual y el RTT anterior, en valores de mili segundos.\\ \\
+
+
+Según lo que se pudo averiguar y las conclusiones a las que se llegó, ninguno de los dos outliers se corresponden con enlaces intercontinentales 
+y subacuáticos. El primer outlier (para el TTL=4) se corresponde con el proveedor de internet del hogar donde se ejecutó el programa.
+Y el segundo outlier, por lo que se analizó, se debe a la gran distancia entre la IP del servidor del estado de Kansas (centro de USA) 
+y el servidor de alguna ciudad costera de Estados Unidos. Por lo tanto, se obtuvieron dos falsos negativos, en cuanto a los outliers obtenidos. \\ \\
+
+
 
 
 
