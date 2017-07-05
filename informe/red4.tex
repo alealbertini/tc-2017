@@ -1,0 +1,58 @@
+\section{Red hogare\~na casa Ale}
+
+En 'esta secci'on se analizar'a una red hogare\~na pero del hogar de otro integrante. El objetivo en este caso, es mostrar una red mucho m'as chica,
+con un grafo con menor cantidad de nodos (hosts) y ver si la cantidad de paquetes Unicast y Broadcast son similares o no. 
+Para este caso se espera que los valores en promedio de paquetes Unicast y Broadcast sean parecidos al experimento realizado en el hogar del 
+otro integrante (punto 1) red hogare\~na), ya que en un hogar, cada dispositivo m'ovil 
+y cada computadora realizan sus propias tareas, los usuarios de cada dispositivo realizan sus propias actividades y por lo general, no est'an 
+relacionadas entre s'i, por lo tanto, la cantidad de paquetes Unicast deber'ia ser mayor, claramente, a la cantidad de paquetes Broadcast. \\
+
+Dada la fuente binaria S, donde S se define como S = ($S_{unicast}$, $S_{broadcast}$), tomando como la entrop'ia m'axima = 1, suponiendo 
+que los eventos son equiprobables, a continuaci'on se mostrar'an los calculos de la entrop'ia y los porcentajes de paquetes Unicast vs Broadcast:
+
+
+\begin{figure}[!h]
+\centering
+\caption{Informaci'on de S p'ublica}
+\begin{tabular}{ r|c|c| }
+\multicolumn{1}{r}{}
+ &  \multicolumn{1}{c}{frecuencia}
+ & \multicolumn{1}{c}{informaci'on} \\
+\cline{2-3}
+$S_{broadcast}$ & 0 & 0 \\
+\cline{2-3}
+$S_{unicast}$ & 0 & 0 \\
+\cline{2-3}
+\end{tabular}
+\end{figure}
+
+Como se puede observar en la siguiente tabla, hay dos nodos que tienen valores que est'an por debajo de la entrop'ia media,
+el host 158.124.30.40 y el host 158.124.30.100. El primero se debe a la computadora de escritorio que est'a conectada al router y el 
+segundo se debe a uno de los celulares que m'as actividad en internet estaba teniendo al momento de la captura de paquetes. El resto
+de los nodos de deben al resto de los dispositivos m'oviles. \\ 
+
+A continuaci'on se podr'a obsevar la actividad de cada nodo, en cuanto a cantidad de informaci'on con respecto a la fuente S1,
+que seg'un como se defini'o anteriormente, es la cantidad de nodos distintos que aparecen en la red. Estos datos se comparan 
+contra la entrop'ia media que es la l'inea roja que aparece en el gr'afico. 
+ 
+\begin{figure}[!h]
+\centering
+\caption{Informaci'on red p'ublica}
+\includegraphics[width=0.75\textwidth]{red4_info}
+ \label{fig:red3info}
+\end{figure}
+
+En el siguiente gr'afico se mostrar'a el grafo subyacente de mensajes ARP que se form'o con los paquetes ARP que estaban circulando 
+en la red que observamos. Como se descubri'o antes, aparecen en color amarillo, los nodos destacados, es decir, que sus valores de
+ informaci'on est'an por debajo de la entrop'ia media. Se pueden observar cuatro nodos, un nodo destacado que es el principal (el 158.124.30.40),
+ esa ip se corresponde con la computadora de escritorio que esta conectada por cable de red al router, este puede ser un motivo por el cual,
+ los nodos restantes est'en enlazados a este, en el grafo. Los nodos restantes se corresponden a telefonos m'oviles, esto se pudo averiguar 
+ chequeando la ip de cada celular. Por lo tanto, en este caso, no se detectaron nodos an'omalos. \\
+ 
+
+\begin{figure}[!h]
+\caption{Visualizaci'on red p'ublica, en amarillo los nodos destacados}
+\includegraphics[width=1.1\textwidth]{red4_red}
+ \label{fig:red3net}
+\end{figure}
+
