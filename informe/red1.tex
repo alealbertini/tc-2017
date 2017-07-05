@@ -1,10 +1,10 @@
 \section{Red hogare\~na}
-Esta red en principio es muy controlada y solo sabemos que cuenta con un n'umero peque\~no de nodos. La red usa
+Esta red en principio es muy controlada y s'olo sabemos que cuenta con un n'umero peque\~no de nodos. La red usa
 en su mayoria wi-fi por lo cual es de esperar que el nodo que usamos para monitorear la red reciba amplia cantidad de
 paquetes who-has y is-at dado que no hay switches segmentando la red que filtren respuestas is-at de terceros.
 
-El primer experimento, el cual ve la red como una fuente con 2 simbolos unicamente, arroja luego de monitorear la red durante
-30 minutos que en ella  la mayor parte del trafico es unicast y solo el 17\% es broadcast.\\
+El primer experimento, el cual ve la red como una fuente con 2 s'imbolos unicamente, arroja luego de monitorear la red,
+que la mayor parte del tr'afico es unicast y solo el 17\% es broadcast.\\
 
 \begin{figure}[!h]
 \centering
@@ -26,8 +26,8 @@ Estos valores nos dan una entrop'ia de 0.66 bits (siendo el m'aximo 1 dado que h
  los nodos y el gateway hacia internet.\\
  
 En el segundo experimento, el cual modela la red basado en la direcci'on a resolver en mensajes ARP, usamos la misma captura
-utilizada en el experimento anterior. El programa que usamos para analizar los resultados destaco 3 nodos de la red cuando
-esperabamos solo 1. El siguiente grafico muestra la informaci'on de cada simbolo y la entrop'ia de la fuente, como se puede
+utilizada en el experimento anterior. El script que usamos para analizar los resultados destac'o 3 nodos de la red cuando
+esperabamos s'olo 1. El siguiente gr'afico muestra la informaci'on de cada s'imbolo y la entrop'ia de la fuente, como se puede
 ver hay 3 nodos destacados bajo nuestra definici'on.\\
  
 \begin{figure}[!h]
@@ -39,13 +39,13 @@ ver hay 3 nodos destacados bajo nuestra definici'on.\\
 
 Una investigaci'on m'as meticulosa concluy'o que \texttt{192.168.1.1} es el gateway por defecto de la red mientras que los otros 2 nodos
 destacados, \texttt{192.168.1.11} y \texttt{192.168.1.101} ni siquiera existen en la red, las direcciones no fueron asignadas y ning'un
-nodo las esta usando mas un nodo de la red esta constantemente intentando resolver su direcci'on de enlace. Solo podemos
-suponer que este host tiene software mal configurado o defectuoso.
-Las interacciones de los nodos se puede ver en m'as detalle con el siguiente grafico donde se puede ver a los nodos destacados
-y las relaciones con los otros nodos. Notar que en el grafico, asi como en el experimento tambi'en aparece un nodo con direcci'on 
-\texttt{169.254.255.255} la cual es la direcci'on que el sistema operativo windows asignado a un nodo cuando este no puede
+nodo las est'a usando. S'olo podemos
+suponer que este host tiene un software mal configurado o defectuoso.
+Las interacciones de los nodos se pueden ver en m'as detalle, en el siguiente gr'afico donde se puede ver a los nodos destacados
+y las relaciones con los otros nodos. Notar que en el gr'afico, as'i como en el experimento, tambi'en aparece un nodo con direcci'on 
+\texttt{169.254.255.255} la cual es la direcci'on que el sistema operativo windows asign'o a un nodo cuando este no puede
 contactar a ning'un servidor DHCP para que le asigne una direcci'on libre. Usualmente los nodos operan con esta direcci'on durante
-segundos o minutos hasta que se puedan proveer de una direcci'on valida.
+segundos o minutos, hasta que se pueda proveer de una direcci'on v'alida.
 
 \begin{figure}[!h]
 \centering
@@ -54,4 +54,4 @@ segundos o minutos hasta que se puedan proveer de una direcci'on valida.
  \label{fig:red1net}
 \end{figure}
 
-El gr'afico confirma que los nodos no existentes que se destacaron son solo accedidos por un nodo.\\
+El gr'afico confirma que los nodos que se destacaron, son solo accedidos por un nodo.\\

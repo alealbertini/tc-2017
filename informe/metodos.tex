@@ -1,20 +1,33 @@
 \section{M'etodos y ambientes}
-Las redes seran analizadas con dos herramientas que escuchan un medio compartido en modo promiscuo. La primer herramienta
- modela la red como una fuente $S$ cuyos posibles simbolos son $S_{unicast}$ si el paquete leido es enviado
- a un nodo especifico y $S_{broadcast}$ si el paquete es enviado a la direccion de broadcast (\texttt{ff:ff:ff:ff:ff:ff}), 
- ning'un paquete es filtrado, cualquier paquete que llega nuestro enlace ser'a tenido en cuenta.\\
-La segunda herramienta modelar'a la red como una fuente $S1$ cuyos posibles simbolos son todas las direcciones de red disponibles
-en la red (como esto es desconocido, vamos a asumir que todos los simbolos observados son todos los simbolos posibles) en 
-paquetes ARP que nos encontramos en la red. La consigna era definir una funci'on que designe algu'n simbolo como distinguido
-fundado en alg'un resultado matematico y para esto distinguimos a aquellos simbolo o simbolos que tengan informaci'on menor a
-la entrop'ia dado que estos seran m'as comunes de ver (por la definici'on de informaci'on y entrop'ia), es decir, que los otros
-nodos de la red piden su direcci'on de enlace muy frecuentemente. Esto har'a distinguir a nodos internos muy usados o bien
-al gateway por defecto de la red por la cual todos los nodos salen a otras redes como internet.\\
+Las redes ser'an analizadas con dos herramientas que escuchan un medio compartido en modo promiscuo. \\
 
-Las N redes que elegimos para experimentar son las siguientes
+La primera herramienta
+ modela la red como una fuente $S$ cuyos posibles s'imbolos son $S_{unicast}$ si el paquete le'ido es enviado
+ a un nodo espec'ifico y $S_{broadcast}$ si el paquete es enviado a la direcci'on broadcast (\texttt{ff:ff:ff:ff:ff:ff}). 
+ Adem'as, ning'un paquete es filtrado y cualquier paquete que llega nuestro enlace ser'a tenido en cuenta.
+ El objetivo en este caso es diferenciar cuando se env'ia un paquete a un s'olo dispositivo (paquete unicast) o cuando se manda
+ un mismo paquete a todos los dispositivos que est'an conectados a la red en ese momento (paquete broadcast).\\
+ 
+La segunda herramienta modelar'a la red como una fuente $S1$ cuyos posibles s'imbolos son todas las direcciones IP disponibles
+en la red (como esto es desconocido, vamos a asumir que todos los s'imbolos observados son todos los s'imbolos posibles) en 
+paquetes ARP que se van capturando en la red. Adem'as, se agrupar'an los nodos iguales para mostrar un gr'afico m'as entendible. 
+El objetivo de 'esta fuente es poder distinguir los distintos hosts que hay en la red, poder analizar como est'an conectados entre s'i, 
+ descubrir el alcance total de la red y ver que dispositivos est'an conectados en la misma.\\ 
+
+La consigna era definir una funci'on que designe alg'un s'imbolo como distinguido
+fundado en alg'un resultado matem'atico. Por eso, distinguimos a aquellos s'imbolos que tengan informaci'on menor a
+la entrop'ia, dado que estos ser'an m'as comunes de ver (por la definici'on de informaci'on y de entrop'ia), ya que los otros
+nodos de la red piden su direcci'on de enlace muy frecuentemente. Esto har'a distinguir a nodos internos muy usados o bien
+al gateway por defecto de la red, por la cual, todos los nodos salen a otras redes como internet.\\
+
+El tiempo de muestreo es similar para todos los experimentos, fue de 30 minutos en cada caso. \\
+
+Las 4 redes que elegimos para experimentar son las siguientes:
 \begin{itemize}
-	\item Red hogare\~na: red local wi-fi en una casa particular, lo unico que sabemos es que contiene una cantidad muy
-	 limitada de computadoras personales y dispositivos mobiles.
+	\item Red hogare\~na: red local wi-fi en una casa particular, lo 'unico que sabemos es que contiene una cantidad muy
+	 limitada de computadoras personales y dispositivos m'oviles.
 	\item Red laboral: red local ethernet en una oficina, sabemos que conviven computadoras de empleados y servidores.
 	\item Red p'ublica: red wi-fi en un shopping, diferentes tipos de usuarios, dispositivos y duraci'on de leasing the direcciones de red
+	\item Red hogare\~na nuevo experimento: Para el recupetario del TP1, se decidi'o agregar 'esta nueva red de hogar, mucho m'as 
+		peque\~na que la primera red hogare\~na y en un domicilio diferente. 
 \end{itemize}
